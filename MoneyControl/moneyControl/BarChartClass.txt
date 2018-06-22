@@ -1,0 +1,152 @@
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+
+public class BarChartClass extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JComboBox<String> monthLabel;
+	Map <String, Double> storedAmounts = new HashMap<String, Double>();
+	private static LinkedHashSet<String>  arrayOfdescSep;
+	private static ArrayList<Double> arrayOfamountSep;
+	private static LinkedHashSet<String>  arrayOfdescOct;
+	private static ArrayList<Double> arrayOfamountOct;
+	private String monthCombo;
+	private JFreeChart chart;
+
+	public BarChartClass(final String title) {
+		super(title);
+		monthLabel = new JComboBox<String>();
+		monthLabel.addItem("Total Expenses");
+		monthLabel.addItem("September");
+		monthLabel.addItem("October");
+		monthLabel.setPreferredSize(new Dimension(120,20));
+
+		final CategoryDataset dataset = createDataset();
+		final JFreeChart chart = createChart(dataset);
+		final ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new Dimension(600, 450));
+		chartPanel.setLayout(new FlowLayout(100));
+		setContentPane(chartPanel);
+		chartPanel.add(monthLabel);
+
+	}
+
+	private CategoryDataset createDataset() {
+		getTheStoredAmounts();
+		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		monthCombo = (String) monthLabel.getSelectedItem();
+		final Comparable<String> category1 = "Category1";
+		
+		for (Map.Entry<String, Double> entry : storedAmounts.entrySet()){
+			dataset.addValue(entry.getValue(), entry.getKey(), category1);
+		}
+		
+		monthLabel.addActionListener (new ActionListener () {
+			public void actionPerformed(ActionEvent e) {
+				monthCombo = (String) monthLabel.getSelectedItem();
+				
+				if (monthCombo.equals("Total Expenses")){
+					dataset.clear();
+					chart.getTitle().setText("Total Expenses");
+					for (Map.Entry<String, Double> entry : storedAmounts.entrySet()){	
+						dataset.addValue(entry.getValue(), entry.getKey(), category1);
+					}
+				}
+				
+				else if (monthCombo.equals("September")){
+					chart.getTitle().setText("Expenses for September");
+					dataset.clear();
+					getTheAmountsForSep();
+					getTheDescriptionsForSep();
+					int i=0;
+		    		  for (Iterator<String> s = arrayOfdescSep.iterator();s.hasNext(); i++){
+		    			  String desc = s.next();
+		    			  dataset.setValue( arrayOfamountSep.get(i),desc, category1);  
+					}
+				}
+				
+				else if (monthCombo.equals("October")){
+					dataset.clear();
+					chart.getTitle().setText("Expenses for October");
+					getTheAmountsForOct();
+					getTheDescriptionsForOct();
+					int i=0;
+		    		  for (Iterator<String> s = arrayOfdescOct.iterator();s.hasNext(); i++){
+		    			  String desc = s.next();
+		    			  dataset.setValue( arrayOfamountOct.get(i),desc, category1); 
+					}
+				}
+			}
+		});
+
+		return dataset;
+	}
+
+	private JFreeChart createChart(final CategoryDataset dataset) {
+
+		// create the chart...
+		chart = ChartFactory.createBarChart(
+				"Total Expenses",  	   // chart title
+				"Category",               // domain axis label
+				"Value",                  // range axis label
+				dataset,                  // data
+				PlotOrientation.VERTICAL, // orientation
+				true,                     // include legend
+				true,                     // tooltips?
+				false                     // URLs?
+				);
+		return chart;
+	}
+
+	public Map <String, Double> getTheStoredAmounts (){
+		MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+		storedAmounts = amounts.getStoreAmounts();
+
+		return (Map<String, Double>) storedAmounts;
+	}
+
+	public LinkedHashSet<String> getTheDescriptionsForSep (){
+		MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+		arrayOfdescSep = amounts.getThedescSep();
+
+		return  arrayOfdescSep;
+	}
+
+	public ArrayList<Double> getTheAmountsForSep (){
+		MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+		arrayOfamountSep = amounts.getTheAmountSep();
+
+		return  arrayOfamountSep;
+	}
+
+	public LinkedHashSet<String> getTheDescriptionsForOct (){
+		MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+		arrayOfdescOct = amounts.getThedescOct();
+
+		return  arrayOfdescOct;
+	}
+
+	public ArrayList<Double> getTheAmountsForOct (){
+		MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+		arrayOfamountOct = amounts.getTheAmountOct();
+
+		return  arrayOfamountOct;
+	}
+
+}

@@ -1,0 +1,353 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.util.Rotation;
+
+	public class MoneyControlChart extends JFrame implements ActionListener{
+		Map <String, Double> storedAmounts = new HashMap<String, Double>();
+		private static LinkedHashSet<String>  arrayOfdescSep;
+		private static ArrayList<Double> arrayOfamountSep;
+		private static LinkedHashSet<String>  arrayOfdescOct;
+		private static ArrayList<Double> arrayOfamountOct;
+		private double sumOfExpenses;
+		private static final long serialVersionUID = 1L;
+		public String monthCombo;
+		DefaultListModel<String> listModel;
+		private JFreeChart chart;
+		private JRadioButton pieChart, barChart;
+		ButtonGroup group;
+		private ChartPanel chartPanel;
+		private JPanel panel;
+		private JSplitPane splitPane,splitPaneRight;
+		DefaultPieDataset result=null;
+		DefaultCategoryDataset dataset=null;
+		public JScrollPane chartPane;
+		
+		public MoneyControlChart (){
+			
+			//buildBarChart();
+			buildPieChart("Pie Chart Test","Total Expenses Pie");
+
+			layoutTop();
+		
+		}
+		public JSplitPane getSplitPane() {
+			
+			return splitPane;
+		}
+		public JSplitPane getSplitPaneRight() {
+			
+			return splitPaneRight;
+		}
+
+		public void layoutTop() {
+			chartPanel = new ChartPanel(chart);
+			//panel = new JPanel();
+			JPanel emptyPanel = new JPanel();
+			JPanel radioPanel = new JPanel();
+			listModel= new DefaultListModel<String>();
+			String [] listData = {"Total Expenses","September", "October"};
+			JList<String> jList = new JList<String>(listData);
+			final JList<String> list = jList;
+			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		    list.setSelectedIndex(0);
+			pieChart = new JRadioButton("Pie",  true);
+			pieChart.setActionCommand("pieCommand");
+			barChart = new JRadioButton("Bar", false);
+			barChart.setActionCommand("barCommand");
+			pieChart.addActionListener(this);
+			barChart.addActionListener(this);
+			group = new ButtonGroup();
+	        group.add(pieChart);
+	        group.add(barChart);
+			emptyPanel.setPreferredSize(new Dimension(520,20));
+			emptyPanel.setBackground(new Color(0,0,0,0));
+			pieChart.setPreferredSize(new Dimension(45,10));
+			barChart.setPreferredSize(new Dimension(45,10));
+			radioPanel.add(list);
+			radioPanel.add(pieChart);
+			radioPanel.add(barChart);
+			
+			chartPanel.add(emptyPanel);
+			//chartPanel.add(radioPanel);
+			add(chartPanel);
+			 
+			JScrollPane listScrollPane = new JScrollPane(radioPanel);
+			
+			//chartPane= new JScrollPane(chartPanel);
+	        //Create a split pane with the two scroll panes in it.
+			
+	        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScrollPane, chartPanel);
+			//splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScrollPane, null);
+	        //chartPanel.revalidate();
+	        //panel.revalidate();
+	        splitPane.setOneTouchExpandable(true);
+	        splitPane.setDividerLocation(200);
+	        Dimension minimumSize = new Dimension(100, 50);
+	        listScrollPane.setMinimumSize(minimumSize);
+	        //chartPane.setMinimumSize(minimumSize);
+	 
+	        //Provide a preferred size for the split pane.
+	        splitPane.setPreferredSize(new Dimension(850, 470));
+	       
+	        
+			list.addListSelectionListener (new ListSelectionListener () {
+    		   public void valueChanged (ListSelectionEvent e) {
+    			   int selectedVar;
+    			   selectedVar = list.getSelectedIndex();
+			if ( pieChart.isSelected() ) {
+			      // Month selections apply to the pie chart view
+			      switch ( selectedVar  ) {
+			         case 1:
+			        	 result.clear();
+			        	 chart.getTitle().setText("Expenses for September");
+ 		    	    	getTheAmountsForSep();
+ 		    	    	getTheDescriptionsForSep();
+ 		    	    	int i=0;
+ 		    		  for (Iterator<String> s = arrayOfdescSep.iterator();s.hasNext(); i++){
+ 		    			  String desc = s.next();
+ 		    			  result.setValue(desc, arrayOfamountSep.get(i)); 
+ 		    		  }
+ 		    		System.out.println("It passed");
+			            break;
+			         case 2:
+			        	  result.clear();
+	    		    		 
+    		    		  chart.getTitle().setText("Expenses for October");
+    		    		  getTheAmountsForOct();
+    		        	  getTheDescriptionsForOct();
+    		        	  int j=0;
+    		    		  for (Iterator<String> s = arrayOfdescOct.iterator();s.hasNext();j++){
+    		    			  String desc = s.next();
+    		    			  result.setValue(desc, arrayOfamountOct.get(j)); 
+   		    		  		}
+			             break;
+			         default:
+			        	 result.clear();
+			        	 chart.getTitle().setText("Total Expenses");
+   		    		  for (Map.Entry<String, Double> entry : storedAmounts.entrySet()){
+   		    			  //i want to pass only the values that are >0, otherwise the expenses 
+   		    			  //	that the user has added
+   		    		       	 if (entry.getValue()>0){ 
+   		    		      result.setValue(entry.getKey(), entry.getValue()/sumOfExpenses);//add getkey=description-getvalue=amount in the result set
+   		    		       		  }
+   		    		       	  	}
+   		    		
+			            break;	
+			      		}
+					}
+			
+			else if (barChart.isSelected()) {
+								
+				final Comparable<String> category1 = "Category1";
+				 switch ( selectedVar ) {
+		         case 1:
+		        	 chart.getTitle().setText("Expenses for September");
+						dataset.clear();
+						getTheAmountsForSep();
+						getTheDescriptionsForSep();
+						int i=0;
+ 		    		  for (Iterator<String> s = arrayOfdescSep.iterator();s.hasNext(); i++){
+ 		    			  String desc = s.next();
+ 		    			  dataset.setValue( arrayOfamountSep.get(i),desc, category1); 
+						}
+		        	 break;
+		         case 2:
+		        	 dataset.clear();
+						chart.getTitle().setText("Expenses for October");
+						getTheAmountsForOct();
+						getTheDescriptionsForOct();
+						int k=0;
+ 		    		  for (Iterator<String> s = arrayOfdescOct.iterator();s.hasNext(); k++){
+ 		    			  String desc = s.next();
+ 		    			  dataset.setValue( arrayOfamountOct.get(k),desc, category1); 
+						}
+		        	 break;
+		         default:
+		        	 dataset.clear();
+		        	 
+						chart.getTitle().setText("Total Expenses Bar2");
+						for (Map.Entry<String, Double> entry : storedAmounts.entrySet()){	
+							dataset.addValue(entry.getValue(), entry.getKey(), category1);
+						}	
+		        	 break;
+				 		}
+					}
+    		    }  
+			});
+		}
+		
+		  @Override
+		    public void actionPerformed (ActionEvent e) {
+			 
+		    	 if (e.getActionCommand().equals("pieCommand")) {
+		    		
+		    		buildPieChart("Pie Chart Test","Total Expenses Pie");
+		    		chartPanel.revalidate();
+		    		pieChart.setSelected(true);
+		    		//System.out.println("It passed");
+		    	 
+		    	}  
+		    	 else if (e.getActionCommand().equals("barCommand")){
+		    		
+		    		 //splitPane.revalidate();
+		    		 buildBarChart();
+		    		 chartPanel.revalidate();
+		    		 
+		    		 //splitPane.repaint();
+		    		 //chartPanel.revalidate();
+		    		 //splitPane.revalidate();
+		    		 barChart.setSelected(true);	
+		    		 System.err.println("It passed bar");
+		    	}
+		    }
+		  
+		  public void buildPieChart(String appTitle, String chartTitle){
+    
+				PieDataset dataset = createDatasetPie();
+				chart = createChart(dataset, chartTitle);
+				chartPanel = new ChartPanel(chart);
+				//layoutTop();
+			
+			}
+		
+      private PieDataset createDatasetPie(){
+    	  getTheStoredAmounts();//pass the stored Amounts from the main class
+    	  sumTheExpenses();
+    	  
+    	  result = new DefaultPieDataset();
+	       	 for (Map.Entry<String, Double> entry : storedAmounts.entrySet()){
+	       		 //System.err.println(e.getKey() + ": " + e.getValue());
+	       		 //i want to pass only the values that are >0, otherwise the expenses that the user has added
+	       		  if (entry.getValue()>0){ 
+	       	  result.setValue(entry.getKey(), entry.getValue()/sumOfExpenses);//add getkey=description-getvalue=amount in the result set
+	       		  }
+	       	  	}
+	  
+    	  	return result;  
+      	}
+    	  
+        private JFreeChart createChart(PieDataset dataset, String title){
+        	
+        	chart = ChartFactory.createPieChart3D(title, dataset, true, true, true);
+        	PiePlot3D plot = (PiePlot3D) chart.getPlot();
+        	plot.setStartAngle(0);
+        	plot.setDirection(Rotation.CLOCKWISE);
+        	plot.setForegroundAlpha(0.5f);
+        	return chart;
+        }
+    
+		
+		public void buildBarChart() {
+		
+			final CategoryDataset dataset = createDatasetBar();
+			chart = createChart(dataset);
+			chartPanel = new ChartPanel(chart);
+			//chartPanel.revalidate();
+			//layoutTop();
+	    
+		}
+		
+		 private CategoryDataset createDatasetBar() {
+				getTheStoredAmounts();
+				dataset = new DefaultCategoryDataset();
+				final Comparable<String> category1 = "Category1";
+				
+				for (Map.Entry<String, Double> entry : storedAmounts.entrySet()){
+					dataset.addValue(entry.getValue(), entry.getKey(), category1);
+				}	
+			return dataset;
+		}
+
+		private JFreeChart createChart(final CategoryDataset dataset) {
+
+			// create the chart...
+			chart = ChartFactory.createBarChart(
+					"Total Expenses Bar1",  	   // chart title
+					"Category",               // domain axis label
+					"Value",                  // range axis label
+					dataset,                  // data
+					PlotOrientation.VERTICAL, // orientation
+					true,                     // include legend
+					true,                     // tooltips?
+					false                     // URLs?
+					);
+			return chart;
+		}
+
+		public Map <String, Double> getTheStoredAmounts (){
+			MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+			storedAmounts = amounts.getStoreAmounts();
+			 
+			 return (Map<String, Double>) storedAmounts;
+		}
+		
+		public LinkedHashSet<String> getTheDescriptionsForSep (){
+			MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+			arrayOfdescSep = amounts.getThedescSep();
+			 
+			 return  arrayOfdescSep;
+		}
+		
+		public ArrayList<Double> getTheAmountsForSep (){
+			MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+			arrayOfamountSep = amounts.getTheAmountSep();
+			 
+			 return  arrayOfamountSep;
+		}
+		
+		public LinkedHashSet<String> getTheDescriptionsForOct (){
+			MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+			arrayOfdescOct = amounts.getThedescOct();
+			 
+			 return  arrayOfdescOct;
+		}
+		
+		public ArrayList<Double> getTheAmountsForOct (){
+			MainMoneyControl amounts = new MainMoneyControl();//get the store amounts from main class
+			arrayOfamountOct = amounts.getTheAmountOct();
+			 
+			 return  arrayOfamountOct;
+		}
+			
+		public double sumTheExpenses(){
+				
+			sumOfExpenses = 0;
+			for (Map.Entry<String, Double> e : storedAmounts.entrySet()){
+				sumOfExpenses += e.getValue();
+			}
+			return sumOfExpenses;
+			}
+
+		
+
+
+}

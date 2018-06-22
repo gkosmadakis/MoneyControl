@@ -1,0 +1,13 @@
+Amount Description                             Date
+
+50     Shopping                 	       16/09/2015
+45     House Rent                              15/09/2015
+150    House Bills  			       17/10/2015
+100    House Rent                              16/09/2015
+55     House Rent                              17/09/2015
+50     Shopping                                19/09/2015
+150    Council Tax                             20/09/2015
+52.5   Shopping                                21/09/2015
+100    House Rent                              22/09/2015
+200    House Bills			       19/10/2015
+250    House Rent                              20/10/2015
