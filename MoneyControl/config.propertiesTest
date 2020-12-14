@@ -1,0 +1,8 @@
+expensesFile=expensesTest.txt
+descriptionsFile=descriptionsTest.txt
+incomeFile=incomeTest.txt
+importSourcePathTest=C:\\Users\\cousm\\eclipse2018-workspace\\MoneyControl\\MoneyControl\\Expenses Exported\\expensesTest.txt
+importDestinationPathTest=C:\\Users\\cousm\\eclipse2018-workspace\\MoneyControl\\MoneyControl\\expensesTest.txt
+exportPathTest=C:\\Users\\cousm\\eclipse2018-workspace\\MoneyControl\\MoneyControl\\expensesTest.txt
+monthsList=January,February,March,April,May,June,July,August,September,October,November,December
+monthData=January,February,March,April,May,June,July,August,September,October,November,December,Total

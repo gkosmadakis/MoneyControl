@@ -1,0 +1,17 @@
+Amount Description                             Date
+
+100    House Rent                              16/10/2015
+50     Shopping                                06/01/2016
+25     Travel                                  05/01/2016
+275    House Rent                              11/03/2016
+200    House Rent                              01/04/2016
+250    Travel                                  01/04/2016
+250    House Rent                              04/05/2016
+25     Travel                                  04/06/2016
+26     Shopping                                04/07/2016
+275    House Rent                              01/08/2016
+55     Shopping                                02/08/2016
+35     Shopping                                12/09/2016
+50     Shopping                                20/06/2017
+150    Shopping                                09/11/2020
+450    House Rent                              10/11/2020
