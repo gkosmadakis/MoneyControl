@@ -1,6 +1,6 @@
 Amount Description                             Date
 
-50     SuperMarket                             16/09/2015
+150    SuperMarket                             17/09/2015
 50     House Bills                             17/10/2015
 55     House Rent                              17/09/2015
 50     Shopping                                19/09/2015
@@ -12,7 +12,6 @@ Amount Description                             Date
 110    House Bills                             02/11/2015
 250    House Rent                              20/10/2015
 150    Shopping                                13/01/2015
-22     SuperMarket                             15/01/2015
 50     Shopping                                16/09/2015
 45     House Rent                              15/09/2015
 150    House Bills                             17/10/2015
@@ -24,10 +23,13 @@ Amount Description                             Date
 200    House Rent                              01/04/2016
 250    Travel                                  01/04/2016
 250    House Rent                              04/04/2016
-23     SuperMarket                             04/04/2016
 25     Travel                                  04/04/2016
 26     Shopping                                04/04/2016
 275    House Rent                              01/05/2016
 55     Shopping                                02/05/2016
 35     Shopping                                12/05/2016
-50     Shopping                                20/06/2016
+50     Shopping                                20/06/2017
+155    Shopping                                09/11/2020
+450    House Rent                              10/11/2020
+25     Shopping                                06/12/2020
+15     Shopping                                09/12/2020
