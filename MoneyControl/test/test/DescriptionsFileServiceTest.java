@@ -67,7 +67,7 @@ public class DescriptionsFileServiceTest {
 	public void testA() {
 		setUp();
 		ArrayList<String> itemsAddedByUser = new ArrayList<String>();
-		DescriptionsFileService descriptions = new DescriptionsFileService("descriptionsTest.txt", "Test", itemsAddedByUser, model);
+		DescriptionsFileService descriptions = new DescriptionsFileService("descriptionsTest.txt", itemsAddedByUser, model);
 		
 		descriptions.writeDescriptionsToFile("Test");
 		ArrayList<String> testList = descriptions.readDescriptionsFile();
@@ -82,7 +82,7 @@ public class DescriptionsFileServiceTest {
 		setUp();
 		
 		ArrayList<String> itemsAddedByUser = new ArrayList<String>();
-		DescriptionsFileService descriptions = new DescriptionsFileService("descriptionsTest.txt", "Test", itemsAddedByUser, model);
+		DescriptionsFileService descriptions = new DescriptionsFileService("descriptionsTest.txt", itemsAddedByUser, model);
 		ArrayList<String> testList = descriptions.readDescriptionsFile();
 		
 		assertTrue(testList.contains("Test"));
@@ -96,7 +96,7 @@ public class DescriptionsFileServiceTest {
 		setUp();
 		
 		ArrayList<String> itemsAddedByUser = new ArrayList<String>();
-		DescriptionsFileService descriptions = new DescriptionsFileService("descriptionsTest.txt", "Test", itemsAddedByUser, model);
+		DescriptionsFileService descriptions = new DescriptionsFileService("descriptionsTest.txt", itemsAddedByUser, model);
 		descriptions.deleteDescriptionFromFile("Test");
 		
 		StringBuilder allTheLines = new StringBuilder();

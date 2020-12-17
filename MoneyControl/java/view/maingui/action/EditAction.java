@@ -11,7 +11,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 
+import loaddata.LoadExpenses;
 import view.editgui.MoneyControlEdit;
+import view.maingui.UpdateBalance;
 
 /**
  * @author cousm Class that handles the click on the Edit button on the GUI
@@ -22,12 +24,17 @@ public class EditAction extends AbstractAction implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	private UpdateBalance updateBalance;
+	private LoadExpenses loadExpenses;
 
 	/**
+	 * @param updateBalance 
+	 * @param loadExpenses 
 	 */
-	public EditAction () {
+	public EditAction (UpdateBalance updateBalance, LoadExpenses loadExpenses) {
 		super(EDIT);
+		this.updateBalance = updateBalance;
+		this.loadExpenses = loadExpenses;
 	}
 
 	public void actionPerformed (ActionEvent arg0) {
@@ -35,7 +42,7 @@ public class EditAction extends AbstractAction implements ActionListener{
 	}
 	
 	private void editAction () {
-		MoneyControlEdit editFrame = new MoneyControlEdit();
+		MoneyControlEdit editFrame = new MoneyControlEdit(updateBalance, loadExpenses);
 		editFrame.setSize(750, 400);
 		editFrame.setTitle(EDIT);
 		editFrame.setVisible(true);

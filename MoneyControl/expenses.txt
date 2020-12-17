@@ -32,4 +32,4 @@ Amount Description                             Date
 155    Shopping                                09/11/2020
 450    House Rent                              10/11/2020
 25     Shopping                                06/12/2020
-15     Shopping                                09/12/2020
+25     House Bills                             15/12/2020

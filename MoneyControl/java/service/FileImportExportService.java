@@ -54,7 +54,7 @@ public class FileImportExportService {
 			System.out.println("The expenses file is imported from " + source);
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Error importing expenses file: "+e.getMessage());
 		}
 	}
 }

@@ -45,7 +45,7 @@ public class WriteToFileService {
 			out.close();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Error writing to expenses file: " +e.getMessage());
 		}
 	}
 

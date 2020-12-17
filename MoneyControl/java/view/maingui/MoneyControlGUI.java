@@ -24,16 +24,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.CategoryDataset;
 
-import interfaces.ISimpleDocumentListener;
 import loaddata.LoadExpenses;
 import service.IncomeFileService;
 import utils.DateLabelFormatter;
@@ -60,19 +55,15 @@ public class MoneyControlGUI extends JFrame implements ActionListener {
 	private DefaultComboBoxModel<String> model;
 	private JTextField expense, datesFrom, incomeField;
 	private JLabel balanceLabel;
-	private static final String NOT_SELECTABLE_OPTION = " - Select an Option - ";
 	private JButton saveButton, addButton, emptyButton, reportButton,
 		editButton, chartButton, exportButton, importButton,emptyButton2;
 	private JDatePickerImpl datePicker;
-	private String importSourcePath;
-	private String importDestinationPath;
-	private String exportPath;
-	private String expensesFile;
-	private String incomeFile;
-	private double balance;
+	protected double balance;
 	private IncomeFileService incomeFileService;
-	private LoadExpenses loadExpenses;
+	protected LoadExpenses loadExpenses;
 	private Validations validations;
+	private UpdateBalance updateBalance;
+	private Map<String, String> propertiesMap;
 	
 	
 	/**
@@ -83,84 +74,20 @@ public class MoneyControlGUI extends JFrame implements ActionListener {
 		this.loadExpenses = loadExpenses;
 		validations = new Validations();
 		layoutTop();
-		loadProperties();
+		propertiesMap = LoadProperties.getPropertiesMap();
+		incomeFileService = new IncomeFileService(propertiesMap.get(INCOME_FILE));
+		updateBalance = new UpdateBalance(balanceLabel, incomeFileService, incomeField,this);
 		buildMenuBar(loadExpenses);
 		loadDescriptions();
 		
-		incomeFileService = new IncomeFileService(incomeFile);
-		setUpBalance(yearToMonthToDescriptionWithAmounts, balanceLabel);
+		balance = updateBalance.setUpBalance(yearToMonthToDescriptionWithAmounts, balanceLabel);
 		
-		incomeFieldDocumentListener(yearToMonthToDescriptionWithAmounts, balanceLabel);
-		
-	}
-	
-	private void setUpBalance (TreeMap<String, TreeMap<String, Map<String, List<Float>>>> yearToMonthToDescriptionWithAmounts,JLabel balanceLabel) {
-		incomeFileService.readIncomeFile();
-		balance = incomeFileService.processBalance(incomeFileService.getIncomeEntered(), yearToMonthToDescriptionWithAmounts);
-		createOrUpdateBalanceChart(balance);
-		incomeField.setText(incomeFileService.getIncomeEntered());
-		balanceLabel.setText("Balance: " + balance);
-	}
-	
-	private void incomeFieldDocumentListener (TreeMap<String, TreeMap<String, Map<String, List<Float>>>> yearToMonthToDescriptionWithAmounts,JLabel balanceLabel) {
-		incomeField.getDocument().addDocumentListener(new ISimpleDocumentListener() {
-			@Override
-			public void insertUpdate (DocumentEvent e) {
-				updateIncomeChart(yearToMonthToDescriptionWithAmounts, balanceLabel);
-			}
-			@Override
-			public void removeUpdate (DocumentEvent e) {
-				updateIncomeChart(yearToMonthToDescriptionWithAmounts, balanceLabel);
-			}
-			@Override
-			public void changedUpdate (DocumentEvent e) {
-			}
-			@Override
-			public void update (DocumentEvent e) {
-			}
-		});
-	}
-	
-	private void updateIncomeChart (TreeMap<String, TreeMap<String, Map<String, List<Float>>>> yearToMonthToDescriptionWithAmounts, JLabel balanceLabel) {
-		balance = incomeFileService.processBalance(incomeField.getText(), yearToMonthToDescriptionWithAmounts);
-		createOrUpdateBalanceChart(balance);
-		balanceLabel.setText("Balance: " + balance);
-	}
-	
-	/**
-	 * @param balance 
-	 * @return chartPanel
-	 */
-	public ChartPanel createOrUpdateBalanceChart (double balance) {
-		CreateIncomeChart processIncome = new CreateIncomeChart(incomeField);
-		final CategoryDataset dataset = processIncome.createCategoryDataset(balance);
-		final JFreeChart chart = processIncome.createChart(dataset, balance);
-		chart.getPlot().setBackgroundPaint(getBackground());
-		chart.getPlot().setOutlineVisible(false);
-		// add the chart to a panel...
-		ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new java.awt.Dimension(320, 30));
-		
-		// Adds the income chart to the main GUI
-		JPanel barPanel = new JPanel();
-		barPanel.add(chartPanel);
-		add(barPanel, BorderLayout.LINE_END);
-		
-		return chartPanel;
+		updateBalance.incomeFieldDocumentListener(yearToMonthToDescriptionWithAmounts, balanceLabel);
 	}
 	
 	private void loadDescriptions () {
 		Descriptions descriptions = new Descriptions(input, description, comboBoxItems, model);
 		descriptions.getTheInputFromDescriptionComboBox();
-	}
-
-	private void loadProperties () {
-		Map<String, String> propertiesMap = LoadProperties.getPropertiesMap();
-		importSourcePath = propertiesMap.get(IMPORT_SOURCE_PATH);
-		importDestinationPath = propertiesMap.get(IMPORT_DESTINATION_PATH);
-		exportPath = propertiesMap.get(EXPORT_PATH);
-		expensesFile = propertiesMap.get(EXPENSES_FILE);
-		incomeFile = propertiesMap.get(INCOME_FILE);
 	}
 
 	/**
@@ -179,13 +106,13 @@ public class MoneyControlGUI extends JFrame implements ActionListener {
 		menuBar.add(fileMenu);
 		menuBar.add(expensesMenu);
 		menuBar.add(helpMenu);
-		JMenuItem saveAction = new JMenuItem(new SaveAction(expense, description,datePicker, expensesFile,loadExpenses));
-		JMenuItem exportAction = new JMenuItem(new ExportAction(exportPath, importSourcePath));
-		JMenuItem importAction = new JMenuItem(new ImportAction(importSourcePath, importDestinationPath));
+		JMenuItem saveAction = new JMenuItem(new SaveAction(expense, description,datePicker,  propertiesMap.get(EXPENSES_FILE),loadExpenses, updateBalance));
+		JMenuItem exportAction = new JMenuItem(new ExportAction(propertiesMap.get(EXPORT_PATH),  propertiesMap.get(IMPORT_SOURCE_PATH)));
+		JMenuItem importAction = new JMenuItem(new ImportAction( propertiesMap.get(IMPORT_SOURCE_PATH), propertiesMap.get(IMPORT_DESTINATION_PATH)));
 		JMenuItem exitAction = new JMenuItem(new ExitAction(incomeField));
 		JMenuItem addExpensesAction = new JMenuItem(new AddExpensesAction(datesFrom));
 		JMenuItem reportAction = new JMenuItem(new ReportAction(loadExpenses));
-		JMenuItem editAction = new JMenuItem(new EditAction());
+		JMenuItem editAction = new JMenuItem(new EditAction(updateBalance, loadExpenses));
 		JMenuItem chartsAction = new JMenuItem(new ChartsAction(loadExpenses));
 		JMenuItem helpAction = new JMenuItem(new HelpAction());
 		addActionButtonsToMenuCategories(fileMenu, expensesMenu, helpMenu, saveAction, exportAction, importAction, exitAction, addExpensesAction, reportAction, editAction, chartsAction, helpAction);
@@ -223,6 +150,7 @@ public class MoneyControlGUI extends JFrame implements ActionListener {
 		incomeField = new JTextField();
 		balanceLabel = new JLabel(BALANCE_COLON);
 		addComponentsToTopPanel(top, expensesLabel, expensesDescriptionLabel, dateLabel, incomeLabel);
+		
 		
 		return top;
 	}
@@ -281,7 +209,7 @@ public class MoneyControlGUI extends JFrame implements ActionListener {
 		exportButton.addActionListener(this);
 		importButton = new JButton(IMPORT);
 		importButton.addActionListener(this);
-		emptyButton2 = new JButton("Test");
+		emptyButton2 = new JButton();
 		emptyButton2.setVisible(false);
 	}
 
@@ -311,7 +239,7 @@ public class MoneyControlGUI extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed (ActionEvent e) {
 		if (e.getSource() == saveButton) {
-			new SaveAction(expense, description,datePicker, expensesFile,loadExpenses).actionPerformed(e);
+			new SaveAction(expense, description,datePicker,  propertiesMap.get(EXPENSES_FILE),loadExpenses,updateBalance).actionPerformed(e);
 		}
 		if (e.getSource() == addButton) {
 			new AddExpensesAction(datesFrom).actionPerformed(e);
@@ -320,16 +248,16 @@ public class MoneyControlGUI extends JFrame implements ActionListener {
 			new ReportAction(loadExpenses).actionPerformed(e);
 		}
 		if (e.getSource() == editButton) {
-			new EditAction().actionPerformed(e);
+			new EditAction(updateBalance, loadExpenses).actionPerformed(e);
 		}
 		if (e.getSource() == chartButton) {
 			new ChartsAction(loadExpenses).actionPerformed(e);
 		}
 		if (e.getSource() == exportButton) {
-			new ExportAction(exportPath, importSourcePath).actionPerformed(e);
+			new ExportAction(propertiesMap.get(EXPORT_PATH), propertiesMap.get(IMPORT_SOURCE_PATH)).actionPerformed(e);
 		}
 		if (e.getSource() == importButton) {
-			new ImportAction(importSourcePath, importDestinationPath).actionPerformed(e);
+			new ImportAction(propertiesMap.get(IMPORT_SOURCE_PATH), propertiesMap.get(IMPORT_DESTINATION_PATH)).actionPerformed(e);
 		}
 	}
 	

@@ -61,8 +61,8 @@ public class EditExpenseService {
 			}
 			writeTheEditedFile(expensesFile, br, fileContent);
 		}
-		catch (Exception e) {// Catch exception if any
-			System.err.println("Error: " + e.getMessage());
+		catch (IOException e) {// Catch exception if any
+			System.err.println("Error in editing expense: " + e.getMessage());
 		}
 	}
 

@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -40,26 +39,19 @@ public class IncomeFileService {
 	 * @param incomeEntered adds the income to the file by appending it to a new line
 	 */
 	public void writeIncomeToFile (String incomeEntered) {
-		ArrayList<String> storedIncomeInFile = new ArrayList<String>();
+		PrintWriter out;
 		try {
-			FileReader reader = new FileReader(incomeFile);
-			Scanner in = new Scanner(reader);
-			while (in.hasNextLine()) {
-				storedIncomeInFile.add(in.nextLine());
-			}
-			reader.close();
-			in.close();
-			String incomeItem = incomeEntered;
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(incomeFile, true)));
-			if (incomeItem != null && !storedIncomeInFile.contains(incomeItem)) {
-				out.append(incomeItem);
+			out = new PrintWriter(new BufferedWriter(new FileWriter(incomeFile, true)));
+			if (!incomeEntered.equals(null) && !incomeEntered.equals("")) {
+				out.append(incomeEntered);
 				out.write(System.lineSeparator());// prints a new line
 			}
 			out.close();
 		}
 		catch (IOException e) {
-			System.out.println("Error processing file:" + e);
+			System.err.println("Error writing to income file: " +e.getMessage());
 		}
+		
 	}
 	
 	/**
@@ -78,7 +70,7 @@ public class IncomeFileService {
 			in.close();
 		}
 		catch (IOException e) {
-			System.out.println("File not found");
+			System.err.println("Error reading income file: "+e.getMessage());
 		}
 		return incomeEntered;
 	}

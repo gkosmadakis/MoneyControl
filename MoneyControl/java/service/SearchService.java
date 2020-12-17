@@ -117,7 +117,7 @@ public class SearchService {
 			in.close();
 		}
 		catch (IOException e) {
-			System.out.println("File not found");
+			System.err.println("Error reading the file in search service: "+e.getMessage());
 		}
 		return allTheLines;
 	}

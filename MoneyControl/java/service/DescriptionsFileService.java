@@ -30,11 +30,10 @@ public class DescriptionsFileService {
 	
 	/**
 	 * @param descriptionsFile
-	 * @param input
 	 * @param itemsAddedByUser
 	 * @param model
 	 */
-	public DescriptionsFileService (String descriptionsFile, String input, ArrayList<String> itemsAddedByUser, DefaultComboBoxModel<String> model) {
+	public DescriptionsFileService (String descriptionsFile, ArrayList<String> itemsAddedByUser, DefaultComboBoxModel<String> model) {
 		super();
 		this.descriptionsFile = descriptionsFile;
 		this.itemsAddedByUser = itemsAddedByUser;
@@ -54,7 +53,7 @@ public class DescriptionsFileService {
 			// inform the list that a new description is added
 		}
 		catch (IOException e) {
-			System.out.println("Error processing file:" + e);
+			System.err.println("Error writing to description file: " + e.getMessage());
 		}
 	}
 	
@@ -76,7 +75,7 @@ public class DescriptionsFileService {
 			in.close();
 		}
 		catch (IOException e) {
-			System.out.println("File not found");
+			System.err.println("Error reading description file: "+e.getMessage());
 		}
 		return itemsAddedByUser;
 	}
@@ -103,8 +102,8 @@ public class DescriptionsFileService {
 			out.close();
 			br.close();
 		}
-		catch (Exception e) { // Catch exception if any
-			System.err.println("Error: " + e.getMessage());
+		catch (IOException e) { // Catch exception if any
+			System.err.println("Error deleting from description file: " + e.getMessage());
 		}
 	}
 }

@@ -29,8 +29,8 @@ public class LoadProperties {
 				propertiesMap.put((String) key, prop.getProperty((String) key));
 			}
 		}
-		catch (IOException ex) {
-			ex.printStackTrace();
+		catch (IOException e) {
+			System.err.println("Error reading properties file: " +e.getMessage());
 		}
 	}
 	

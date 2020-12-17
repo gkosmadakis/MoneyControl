@@ -6,7 +6,6 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -15,12 +14,11 @@ import java.util.TreeMap;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
-import org.jfree.chart.ChartPanel;
 import org.junit.jupiter.api.Test;
 
 import loaddata.LoadExpenses;
-import view.maingui.MoneyControlGUI;
 import utils.LoadProperties;
+import view.maingui.MoneyControlGUI;
 
 /**
  * @author cousm
@@ -59,19 +57,6 @@ public class MoneyControlGUITest {
 		assertEquals(19, testPanel.getComponentCount());
 	}
 	
-	/**
-	 * 
-	 */
-	@Test
-	public void testCreateOrUpdateBalanceChart() {
-		LoadProperties.setPropertiesFromPropertiesFile("C:\\Users\\cousm\\eclipse2018-workspace\\MoneyControl\\MoneyControl\\config.propertiesTest");
-		LoadExpenses loadExpenses = new LoadExpenses();
-		TreeMap<String, TreeMap<String, Map<String, List<Float>>>> yearToMonthToDescriptionWithAmounts = loadExpenses.readTheFile();
-		MoneyControlGUI moneyControlGUI = new MoneyControlGUI(loadExpenses, yearToMonthToDescriptionWithAmounts);
-		
-		ChartPanel testChartPanel = moneyControlGUI.createOrUpdateBalanceChart(2000.0);
-		assertNotNull(testChartPanel.getChart());
-	}
 	
 	
 }

@@ -46,8 +46,8 @@ public class ExportAction extends AbstractAction implements ActionListener{
 		try {
 			fileImportExportService.processExport(new File(exportPath), new File(importSourcePath));
 		}
-		catch (IOException e1) {
-			e1.printStackTrace();
+		catch (IOException e) {
+			System.err.println("Error exporting expenses: " +e.getMessage());
 		}
 	}
 	

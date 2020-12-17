@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
 
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -20,9 +21,11 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultEditorKit;
 
+import loaddata.LoadExpenses;
 import service.DeleteExpenseService;
 import service.SearchService;
 import view.maingui.AlertDialog;
+import view.maingui.UpdateBalance;
 
 /**
  * Class to show the Edit an Expense GUI window and perform actions on its buttons
@@ -37,11 +40,17 @@ public class MoneyControlEdit extends JFrame implements ActionListener, MouseLis
 	private Action selectLine;
 	private AlertDialog alertDialog;
 	private SearchService searchService;
+	private UpdateBalance updateBalance;
+	private LoadExpenses loadExpenses;
 	
 	/**
 	 * Constructor
+	 * @param updateBalance
+	 * @param loadExpenses 
 	 */
-	public MoneyControlEdit () {
+	public MoneyControlEdit (UpdateBalance updateBalance, LoadExpenses loadExpenses) {
+		this.updateBalance = updateBalance;
+		this.loadExpenses = loadExpenses;
 		layoutGUI();
 		showResultsPane = new JTextPane();
 		getContentPane().add(new JTextPane());
@@ -199,6 +208,13 @@ public class MoneyControlEdit extends JFrame implements ActionListener, MouseLis
 		if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
 			selectLine.actionPerformed(null);
 			expenseIsSelected = true;
+		}
+	}
+	
+	protected void processWindowEvent (WindowEvent e) {
+		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+			updateBalance.updateIncomeChart(loadExpenses.readTheFile());
+			this.dispose();
 		}
 	}
 	

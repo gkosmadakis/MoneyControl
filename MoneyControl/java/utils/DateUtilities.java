@@ -90,7 +90,7 @@ public class DateUtilities {
 			dateIntheFile = format.parse(date);// convert the date into Date
 		}
 		catch (ParseException e) {
-			e.printStackTrace();
+			System.err.println("Error parsing string date to date: " +e.getMessage());
 		}
 		return dateIntheFile;
 	}

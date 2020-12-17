@@ -46,7 +46,6 @@ public class DeleteExpenseService {
 			String strLine;
 			StringBuilder fileContent = new StringBuilder();
 			while ((strLine = br.readLine()) != null) {
-				System.out.println(strLine);
 				// if the line in the file is not the same with the one selected by the user
 				if (!strLine.replace(" ", "").equalsIgnoreCase(editLine.replaceAll("\\[", "").replaceAll("\\]", "").replace(" ", ""))) {
 					fileContent.append(strLine);// then write it to the file.
@@ -57,8 +56,8 @@ public class DeleteExpenseService {
 			}
 			writeUpdatedFile(expensesFile, br, fileContent);
 		}
-		catch (Exception e) {// Catch exception if any
-			e.printStackTrace();
+		catch (IOException e) {// Catch exception if any
+			System.err.println("Error in deleting expense: "+e.getMessage());
 		}
 	}
 

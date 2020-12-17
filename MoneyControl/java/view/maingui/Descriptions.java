@@ -46,7 +46,7 @@ public class Descriptions {
 		this.model = model;
 		loadProperties();
 		alertDialog = new AlertDialog();
-		descriptionsFileService = new DescriptionsFileService(descriptionsFile, input, itemsAddedByUser, model);
+		descriptionsFileService = new DescriptionsFileService(descriptionsFile, itemsAddedByUser, model);
 		itemsAddedByUser = descriptionsFileService.readDescriptionsFile();
 	}
 	

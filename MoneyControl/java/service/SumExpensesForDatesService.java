@@ -94,7 +94,7 @@ public class SumExpensesForDatesService {
 			in.close();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Error reading file to find matching dates"+e.getMessage());
 		}
 		return totalSum;
 	}

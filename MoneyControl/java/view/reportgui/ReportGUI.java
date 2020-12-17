@@ -151,8 +151,8 @@ public class ReportGUI {
 					try {
 						cal.setTime(new SimpleDateFormat("MMM").parse(monthSelected));
 					}
-					catch (ParseException exception) {
-						exception.printStackTrace();
+					catch (ParseException ex) {
+						System.err.println("Error parsing date: "+ex.getMessage());
 					}
 					int monthInt = cal.get(Calendar.MONTH) + 1;
 					reportArea.setText(dataUtilities.extractThreeColumnsFromAllTheLines(reportService.filterFileForThisMonthAndYear(monthInt, allTheLines, yearSelected).toString()));
